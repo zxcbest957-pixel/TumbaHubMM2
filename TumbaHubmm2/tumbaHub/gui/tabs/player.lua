@@ -21,17 +21,17 @@ ContentLayout.Padding = UDim.new(0, 8)
 Mega.Objects.TabFrames[tabKey] = TabFrame
 
 -- Movement Section
-UI.CreateSection(TabFrame, "section_player_movement")
+local MovementSection = UI.CreateSection(TabFrame, "section_player_movement")
 
-UI.CreateToggleWithSettings(TabFrame, "toggle_speed", "Player.Speed", nil, {
+UI.CreateToggleWithSettings(MovementSection, "toggle_speed", "Player.Speed", nil, {
     UI.CreateSlider(nil, "slider_speed", "Player.SpeedValue", 16, 200)
 })
 
-UI.CreateToggleWithSettings(TabFrame, "toggle_fly", "Player.Fly", nil, {
+UI.CreateToggleWithSettings(MovementSection, "toggle_fly", "Player.Fly", nil, {
     UI.CreateSlider(nil, "slider_fly_speed", "Player.FlySpeed", 1, 100)
 })
 
-UI.CreateToggle(TabFrame, "toggle_inf_jump", "Player.InfiniteJump")
-UI.CreateToggle(TabFrame, "toggle_noclip", "Player.NoClip")
+UI.CreateToggle(MovementSection, "toggle_inf_jump", "Player.InfiniteJump")
+UI.CreateToggle(MovementSection, "toggle_noclip", "Player.NoClip")
 
 return TabFrame

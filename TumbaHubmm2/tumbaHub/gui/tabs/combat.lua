@@ -20,19 +20,19 @@ ContentLayout.Padding = UDim.new(0, 8)
 
 Mega.Objects.TabFrames[tabKey] = TabFrame
 
--- Kill Aura Section
-UI.CreateSection(TabFrame, "section_mm2_combat")
+-- Main Combat Section
+local CombatSection = UI.CreateSection(TabFrame, "section_mm2_combat")
 
-UI.CreateToggleWithSettings(TabFrame, "toggle_kill_aura", "MM2.KillAura.Enabled", nil, {
+UI.CreateToggleWithSettings(CombatSection, "toggle_kill_aura", "MM2.KillAura.Enabled", nil, {
     UI.CreateSlider(nil, "slider_killaura_range", "MM2.KillAura.Range", 5, 25),
     UI.CreateSlider(nil, "slider_killaura_delay", "MM2.KillAura.Delay", 0, 1000),
     UI.CreateToggle(nil, "toggle_killaura_target_esp", "MM2.KillAura.TargetESP")
 })
 
--- Auto Shoot Section (Advanced)
-UI.CreateSection(TabFrame, "section_combat_accuracy")
+-- Accuracy Section
+local AccuracySection = UI.CreateSection(TabFrame, "section_combat_accuracy")
 
-UI.CreateToggleWithSettings(TabFrame, "toggle_shoot_murderer", "MM2.AutoShootMurderer", nil, {
+UI.CreateToggleWithSettings(AccuracySection, "toggle_shoot_murderer", "MM2.AutoShootMurderer", nil, {
     UI.CreateToggle(nil, "toggle_autoshoot_silent", "MM2.SilentAim"),
     UI.CreateSlider(nil, "slider_autoshoot_fov", "MM2.AutoShootFOV", 10, 360)
 })

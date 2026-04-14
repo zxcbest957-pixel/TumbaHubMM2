@@ -21,9 +21,9 @@ ContentLayout.Padding = UDim.new(0, 8)
 Mega.Objects.TabFrames[tabKey] = TabFrame
 
 -- Main ESP Section
-UI.CreateSection(TabFrame, "section_esp_main")
+local MainSection = UI.CreateSection(TabFrame, "section_esp_main")
 
-UI.CreateToggleWithSettings(TabFrame, "toggle_esp", "ESP.Enabled", nil, {
+UI.CreateToggleWithSettings(MainSection, "toggle_esp", "ESP.Enabled", nil, {
     UI.CreateToggle(nil, "toggle_esp_boxes", "ESP.Boxes"),
     UI.CreateToggle(nil, "toggle_esp_names", "ESP.Names"),
     UI.CreateToggle(nil, "toggle_esp_role", "ESP.ShowRole"),

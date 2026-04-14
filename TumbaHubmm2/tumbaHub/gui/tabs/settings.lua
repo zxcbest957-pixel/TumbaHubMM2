@@ -22,22 +22,21 @@ Mega.Objects.TabFrames[tabKey] = TabFrame
 
 -- Localization Keys
 local langKeys = { "language_english", "language_russian" }
-local langMap = { language_english = "en", language_russian = "ru" }
+local langMap = { ["language_english"] = "en", ["language_russian"] = "ru" }
 
 -- Appearance Section
-UI.CreateSection(TabFrame, "section_settings_appearance")
+local AppearanceSection = UI.CreateSection(TabFrame, "section_settings_appearance")
 
-UI.CreateDropdown(TabFrame, "dropdown_language", "Localization.CurrentLanguage", langKeys, function(val)
+UI.CreateDropdown(AppearanceSection, "dropdown_language", "Localization.CurrentLanguage", langKeys, function(val)
     local lang = langMap[val] or "en"
     if lang == Mega.Localization.CurrentLanguage then return end
     Mega.Localization.CurrentLanguage = lang
-    Mega.SaveLanguage(lang)
     if Mega.ReloadGUI then Mega.ReloadGUI() end
 end, true)
 
-UI.CreateKeybindButton(TabFrame, "keybind_menu", "Keybinds.Menu")
+UI.CreateKeybindButton(AppearanceSection, "keybind_menu", "Keybinds.Menu")
 
-UI.CreateSlider(TabFrame, "slider_menu_transparency", "Settings.Menu.Transparency", 0, 100, function(v) 
+UI.CreateSlider(AppearanceSection, "slider_menu_transparency", "Settings.Menu.Transparency", 0, 100, function(v) 
     Mega.Settings.Menu.Transparency = v / 100
     if Mega.Objects.GUI and Mega.Objects.GUI:FindFirstChild("MainFrame") then
         Mega.Objects.GUI.MainFrame.BackgroundTransparency = v / 100
@@ -45,26 +44,20 @@ UI.CreateSlider(TabFrame, "slider_menu_transparency", "Settings.Menu.Transparenc
 end)
 
 -- Config Section
-UI.CreateSection(TabFrame, "section_settings_config")
+local ConfigSection = UI.CreateSection(TabFrame, "section_settings_config")
 
-local function refreshConfigList()
-    local configs = Mega.ConfigSystem.GetList()
-    -- Dropdown logic usually handled by UI.CreateDropdown or manually
-end
-
-UI.CreateButton(TabFrame, "button_config_save", function()
-    Mega.ConfigSystem.Save("default")
-    Mega.ShowNotification(GetText("notify_config_saved"))
+UI.CreateButton(ConfigSection, "button_config_save", function()
+    if Mega.ConfigSystem then Mega.ConfigSystem.Save("default") end
+    ShowNotification(GetText("notify_config_saved"))
 end)
 
-UI.CreateButton(TabFrame, "button_config_load", function()
-    Mega.ConfigSystem.Load("default")
-    Mega.ShowNotification(GetText("notify_config_loaded"))
+UI.CreateButton(ConfigSection, "button_config_load", function()
+    if Mega.ConfigSystem then Mega.ConfigSystem.Load("default") end
+    ShowNotification(GetText("notify_config_loaded"))
     if Mega.ReloadGUI then Mega.ReloadGUI() end
 end)
 
 -- Cleanup Section
-UI.CreateSection(TabFrame, "button_cleanup")
 UI.CreateButton(TabFrame, "button_cleanup", function()
     Mega.Unloaded = true
     if Mega.Objects.GUI then Mega.Objects.GUI:Destroy() end
