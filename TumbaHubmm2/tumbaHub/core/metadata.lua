@@ -12,13 +12,25 @@ local jsonContent = nil
 -- Function to load metadata
 function MetadataManager.Init()
     local localPath = "packages.json"
+    local REMOTE_METADATA_URL = "https://raw.githubusercontent.com/zxcbest957-pixel/TumbaHubMM2/refs/heads/main/TumbaHubmm2/packages.json"
     
-    -- In MM2 edition, we favor the local packages.json provided in the workspace
+    -- 1. Try Local Loading
     if isfile and readfile then
         if isfile(localPath) then
             print("📦 TumbaHub MM2: Loading metadata from local packages.json...")
             local success, data = pcall(function() return readfile(localPath) end)
             if success then jsonContent = data end
+        end
+    end
+    
+    -- 2. Fallback to Remote Loading
+    if not jsonContent then
+        print("🌐 TumbaHub MM2: Local metadata not found. Fetching from GitHub...")
+        local success, data = pcall(function() return game:HttpGet(REMOTE_METADATA_URL) end)
+        if success and data then
+            jsonContent = data
+            -- Cache it locally for next time if possible
+            if writefile then pcall(writefile, localPath, data) end
         end
     end
     
@@ -30,6 +42,8 @@ function MetadataManager.Init()
         else
             warn("❌ TumbaHub MM2: Failed to parse packages.json")
         end
+    else
+        warn("⚠️ TumbaHub MM2: Could not load metadata (Local or Remote)")
     end
 end
 

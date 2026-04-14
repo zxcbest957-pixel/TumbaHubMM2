@@ -22,6 +22,8 @@ Mega = {
 
 -- Local baseURL for MM2 edition (if needed for remote assets)
 local baseURL = "tumbaHub/" 
+local REMOTE_URL = "https://raw.githubusercontent.com/zxcbest957-pixel/TumbaHubMM2/main/TumbaHubmm2/tumbaHub/"
+Mega.IsCloud = false -- Set to true to force remote loading
 
 function Mega.GetImageFromURL(url, fileName)
     local folderPath = "tumbaHub/icons_v2/"
@@ -55,28 +57,36 @@ function Mega.LoadModule(path)
     local content = nil
     local success = false
     
-    if isfile and readfile then
+    -- 1. Try Local Loading (for developers)
+    if not Mega.IsCloud and isfile and readfile then
         local localPath = "tumbaHub/" .. path
         if isfile(localPath) then
             success, content = pcall(function() return readfile(localPath) end)
         end
     end
 
+    -- 2. Fallback to Remote Loading (for users)
+    if not success then
+        success, content = pcall(function() 
+            return game:HttpGet(REMOTE_URL .. path) 
+        end)
+    end
+
     if success and content then
         local chunk, err = loadstring("return function(Mega, game, script) " .. content .. " end")
         if chunk then
             local moduleFunc = chunk()
-            local success, err = pcall(moduleFunc, Mega, game, script)
-            if success then
+            local runSuccess, runErr = pcall(moduleFunc, Mega, game, script)
+            if runSuccess then
                 Mega.LoadedModules[path] = true
             else
-                warn("Execution error in module:", path, "|", err)
+                warn("Execution error in module:", path, "|", runErr)
             end
         else
             warn("Syntax error in module:", path, "|", err)
         end
     else
-        warn("Failed to load module locally:", path)
+        warn("Failed to load module (Local/Remote):", path)
     end
 end
 
