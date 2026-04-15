@@ -57,11 +57,11 @@ local function RemoveESP(player)
 end
 
 local function GetRoleColor(role)
-    if role == "Murderer" then return Color3.fromRGB(255, 50, 50)
-    elseif role == "Sheriff" then return Color3.fromRGB(50, 100, 255)
-    elseif role == "Hero" then return Color3.fromRGB(255, 255, 50)
+    if role == "Murderer" then return Settings.ESP.MurdererColor or Color3.fromRGB(255, 50, 50)
+    elseif role == "Sheriff" then return Settings.ESP.SheriffColor or Color3.fromRGB(50, 100, 255)
+    elseif role == "Hero" then return Settings.ESP.HeroColor or Color3.fromRGB(255, 255, 50)
     end
-    return Color3.fromRGB(200, 200, 200) -- Innocent
+    return Settings.ESP.InnocentColor or Color3.fromRGB(200, 200, 200)
 end
 
 local function UpdateESP()
@@ -83,51 +83,63 @@ local function UpdateESP()
                 local dist = (localRoot.Position - root.Position).Magnitude
                 
                 if onScreen and dist <= States.ESP.MaxDistance then
-                    isVisible = true
-                    
-                    local role = "Innocent"
+                    local roleData = { Role = "Innocent", IsDead = false }
                     if Mega.Features.MM2 and Mega.Features.MM2.PlayerRoles then
-                        role = Mega.Features.MM2.PlayerRoles[player.Name] or "Innocent"
+                        roleData = Mega.Features.MM2.PlayerRoles[player.Name] or roleData
                     end
-                    local color = GetRoleColor(role)
                     
-                    local height = 1000 / dist * 3
-                    local width = height * 0.6
+                    local role = roleData.Role
+                    local isDead = roleData.IsDead
                     
-                    if States.ESP.Boxes then
-                        esp.box.Visible = true
-                        esp.box.Size = Vector2.new(width, height)
-                        esp.box.Position = Vector2.new(screenPos.X - width/2, screenPos.Y - height/2)
-                        esp.box.Color = color
-                    else esp.box.Visible = false end
-                    
-                    if States.ESP.Names then
-                        esp.name.Visible = true
-                        esp.name.Position = Vector2.new(screenPos.X, screenPos.Y - height/2 - 15)
-                        esp.name.Text = player.DisplayName or player.Name
-                        esp.name.Color = color
-                    else esp.name.Visible = false end
-                    
-                    if States.ESP.ShowRole and role ~= "Innocent" then
-                        esp.role.Visible = true
-                        esp.role.Position = Vector2.new(screenPos.X, screenPos.Y - height/2 - 28)
-                        esp.role.Text = "[" .. role:upper() .. "]"
-                        esp.role.Color = color
-                    else esp.role.Visible = false end
+                    -- Dead players ESP: show if enabled, but dim them
+                    if isDead and not States.ESP.ShowDead then
+                        isVisible = false
+                    else
+                        isVisible = true
+                        local color = GetRoleColor(role)
+                        if isDead then color = color:Lerp(Color3.new(0,0,0), 0.5) end -- Dim for dead
+                        
+                        local height = 1000 / dist * 3
+                        local width = height * 0.6
+                        
+                        if States.ESP.Boxes then
+                            esp.box.Visible = true
+                            esp.box.Size = Vector2.new(width, height)
+                            esp.box.Position = Vector2.new(screenPos.X - width/2, screenPos.Y - height/2)
+                            esp.box.Color = color
+                            esp.box.Transparency = isDead and 0.5 or 1
+                        else esp.box.Visible = false end
+                        
+                        if States.ESP.Names then
+                            esp.name.Visible = true
+                            esp.name.Position = Vector2.new(screenPos.X, screenPos.Y - height/2 - 15)
+                            esp.name.Text = player.DisplayName or player.Name
+                            esp.name.Color = color
+                            esp.name.Text = isDead and "[DEAD] " .. esp.name.Text or esp.name.Text
+                        else esp.name.Visible = false end
+                        
+                        if States.ESP.ShowRoles and role ~= "Innocent" then
+                            esp.role.Visible = true
+                            esp.role.Position = Vector2.new(screenPos.X, screenPos.Y - height/2 - 28)
+                            esp.role.Text = "[" .. role:upper() .. "]"
+                            esp.role.Color = color
+                        else esp.role.Visible = false end
 
-                    if States.ESP.Distance then
-                        esp.distance.Visible = true
-                        esp.distance.Position = Vector2.new(screenPos.X, screenPos.Y + height/2 + 5)
-                        esp.distance.Text = math.floor(dist) .. " studs"
-                        esp.distance.Color = color
-                    else esp.distance.Visible = false end
+                        if States.ESP.Distance then
+                            esp.distance.Visible = true
+                            esp.distance.Position = Vector2.new(screenPos.X, screenPos.Y + height/2 + 5)
+                            esp.distance.Text = math.floor(dist) .. " studs"
+                            esp.distance.Color = color
+                        else esp.distance.Visible = false end
 
-                    if States.ESP.Tracers then
-                        esp.tracer.Visible = true
-                        esp.tracer.From = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y)
-                        esp.tracer.To = Vector2.new(screenPos.X, screenPos.Y + height/2)
-                        esp.tracer.Color = color
-                    else esp.tracer.Visible = false end
+                        if States.ESP.Tracers then
+                            esp.tracer.Visible = true
+                            esp.tracer.From = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y)
+                            esp.tracer.To = Vector2.new(screenPos.X, screenPos.Y + height/2)
+                            esp.tracer.Color = color
+                            esp.tracer.Transparency = isDead and 0.3 or 1
+                        else esp.tracer.Visible = false end
+                    end
                 end
             end
         end

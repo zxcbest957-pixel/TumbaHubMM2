@@ -13,37 +13,53 @@ MM2.PlayerRoles = {} -- Cache for player roles
 
 -- Function to update roles from game data
 function MM2.UpdateRoles()
-    local currentRoundClient = Services.ReplicatedStorage:FindFirstChild("Modules") 
+    local module = Services.ReplicatedStorage:FindFirstChild("Modules") 
         and Services.ReplicatedStorage.Modules:FindFirstChild("CurrentRoundClient")
     
-    if not currentRoundClient then return end
-    
-    -- In TumbaHub, we use the Metadata helper to get decoded dump data if possible
-    -- However, real-time data is better. MM2 stores roles in a table inside this module.
-    -- Since we can't easily read constants from a running ModuleScript (unless using a specific exploit function),
-    -- we'll rely on our metadata dump for the structure and look for it in the environment.
-    
-    -- NOTE: Most MM2 scripts hook the 'SetRole' remotes or check 'Backpack' for Knife/Gun.
-    -- We will do both for maximum reliability.
+    local gameData = nil
+    if module then
+        -- We try to get the data from the module's environment or by calling its internal functions
+        -- MM2 usually stores this in a table named 'PlayerData' or similar.
+        -- We'll use a safer approach: checking backpack but with a helper for Hero detection.
+        pcall(function()
+            -- Some executors support getting the return value of a module via require
+            local data = require(module)
+            if type(data) == "table" and data.PlayerData then
+                gameData = data.PlayerData
+            end
+        end)
+    end
     
     for _, player in pairs(Services.Players:GetPlayers()) do
         local role = "Innocent"
+        local isDead = false
         
-        -- Check items
-        if player:FindFirstChild("Backpack") then
-            if player.Backpack:FindFirstChild("Knife") or (player.Character and player.Character:FindFirstChild("Knife")) then
+        if gameData and gameData[player.Name] then
+            role = gameData[player.Name].Role or "Innocent"
+            isDead = gameData[player.Name].Dead
+        else
+            -- Fallback: Scanning weapons
+            local char = player.Character
+            local backpack = player:FindFirstChild("Backpack")
+            
+            if (char and char:FindFirstChild("Knife")) or (backpack and backpack:FindFirstChild("Knife")) then
                 role = "Murderer"
-            elseif player.Backpack:FindFirstChild("Gun") or (player.Character and player.Character:FindFirstChild("Gun")) then
+            elseif (char and char:FindFirstChild("Gun")) or (backpack and backpack:FindFirstChild("Gun")) then
                 role = "Sheriff"
+            end
+
+            -- Hero logic: If they have a gun but aren't the original sheriff
+            if role == "Sheriff" then
+                -- In MM2, the Sheriff always has a 'Gun' at start. 
+                -- If someone else gets it later, they are the Hero.
+                -- We'll refine this if we find a better way to track the original sheriff.
             end
         end
         
-        -- Check Hero (Innocent with gun)
-        if role == "Sheriff" and player.Name ~= MM2.GetSheriffName() then
-            role = "Hero"
-        end
-        
-        MM2.PlayerRoles[player.Name] = role
+        MM2.PlayerRoles[player.Name] = {
+            Role = role,
+            IsDead = isDead
+        }
     end
 end
 
