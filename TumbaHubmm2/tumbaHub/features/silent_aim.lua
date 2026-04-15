@@ -32,23 +32,28 @@ local function Hook()
     mt.__namecall = newcclosure(function(self, ...)
         local method = getnamecallmethod()
         
-        -- FAST PATH: Exit immediately if not a target method
-        if method ~= "FindPartOnRayWithIgnoreList" then
-            return oldNamecall(self, ...)
-        end
-
         if not checkcaller() and States.Aimbot.SilentAim and CurrentTarget then
-            local gun = lp.Character and lp.Character:FindFirstChild("Gun")
-            if gun then
+            -- 1. Redirect Raycasts (Used for client-side visuals/checks)
+            if method == "FindPartOnRayWithIgnoreList" then
                 local hitPart = CurrentTarget.Character and (CurrentTarget.Character:FindFirstChild(States.Aimbot.TargetPart) or CurrentTarget.Character:FindFirstChild("HumanoidRootPart"))
-                if hitPart then
-                    if math.random(1, 100) <= States.Aimbot.HitChance then
-                        local args = {...}
-                        local origin = args[1].Origin
-                        local direction = (hitPart.Position - origin).Unit * 1000
-                        args[1] = Ray.new(origin, direction)
-                        return oldNamecall(self, unpack(args))
-                    end
+                if hitPart and math.random(1, 100) <= States.Aimbot.HitChance then
+                    local args = {...}
+                    local origin = args[1].Origin
+                    local direction = (hitPart.Position - origin).Unit * 1000
+                    args[1] = Ray.new(origin, direction)
+                    return oldNamecall(self, unpack(args))
+                end
+            end
+
+            -- 2. Redirect Remote Call (The actual server-side hit registration)
+            -- MM2 uses a remote named 'G' inside ReplicatedStorage for gun shots
+            if method == "FireServer" and self.Name == "G" then
+                local hitPart = CurrentTarget.Character and (CurrentTarget.Character:FindFirstChild(States.Aimbot.TargetPart) or CurrentTarget.Character:FindFirstChild("HumanoidRootPart"))
+                if hitPart and math.random(1, 100) <= States.Aimbot.HitChance then
+                    local args = {...}
+                    -- Spoof the target position
+                    args[1] = hitPart.Position
+                    return oldNamecall(self, unpack(args))
                 end
             end
         end
@@ -62,17 +67,19 @@ local function Hook()
             return oldIndex(self, index)
         end
 
-        if not checkcaller() and States.Aimbot.SilentAim and self == Mouse and CurrentTarget then
-            local gun = lp.Character and lp.Character:FindFirstChild("Gun")
-            if gun then
+        -- Verify we are indexing a Mouse object safely
+        if not checkcaller() and States.Aimbot.SilentAim and CurrentTarget then
+            local isMouse = false
+            local s, res = pcall(function() return self:IsA("Mouse") end)
+            if s and res then isMouse = true end
+
+            if isMouse then
                 local hitPart = CurrentTarget.Character and (CurrentTarget.Character:FindFirstChild(States.Aimbot.TargetPart) or CurrentTarget.Character:FindFirstChild("HumanoidRootPart"))
-                if hitPart then
-                    if math.random(1, 100) <= States.Aimbot.HitChance then
-                        if index == "Hit" then
-                            return hitPart.CFrame
-                        elseif index == "Target" then
-                            return hitPart
-                        end
+                if hitPart and math.random(1, 100) <= States.Aimbot.HitChance then
+                    if index == "Hit" then
+                        return hitPart.CFrame
+                    elseif index == "Target" then
+                        return hitPart
                     end
                 end
             end
