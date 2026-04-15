@@ -1,10 +1,26 @@
 -- features/silent_aim.lua
--- Pro-grade Silent Aim for MM2
+-- Pro-grade Silent Aim for MM2 (Stability Fix)
 
 local Services = Mega.Services
 local States = Mega.States
 local lp = Services.Players.LocalPlayer
 local Mouse = lp:GetMouse()
+
+local CurrentTarget = nil
+
+-- Separate loop for target selection to prevent recursion in hooks
+task.spawn(function()
+    while true do
+        task.wait(0.1)
+        if Mega.Unloaded then break end
+        
+        if States.Aimbot.SilentAim then
+            CurrentTarget = Mega.Features.Aimbot and Mega.Features.Aimbot.GetTarget(States.Aimbot.SilentFOV)
+        else
+            CurrentTarget = nil
+        end
+    end
+end)
 
 -- Metatable hooking helper
 local function Hook()
@@ -14,26 +30,24 @@ local function Hook()
     setreadonly(mt, false)
 
     mt.__namecall = newcclosure(function(self, ...)
-        local args = {...}
         local method = getnamecallmethod()
         
-        if not checkcaller() and States.Aimbot.SilentAim then
-            -- Only redirect if we are holding the Gun
+        -- FAST PATH: Exit immediately if not a target method
+        if method ~= "FindPartOnRayWithIgnoreList" then
+            return oldNamecall(self, ...)
+        end
+
+        if not checkcaller() and States.Aimbot.SilentAim and CurrentTarget then
             local gun = lp.Character and lp.Character:FindFirstChild("Gun")
             if gun then
-                if method == "FindPartOnRayWithIgnoreList" then
-                    local target = Mega.Features.Aimbot and Mega.Features.Aimbot.GetTarget(States.Aimbot.SilentFOV)
-                    if target and target.Character then
-                        local hitPart = target.Character:FindFirstChild(States.Aimbot.TargetPart) or target.Character:FindFirstChild("HumanoidRootPart")
-                        if hitPart then
-                            -- Random chance check
-                            if math.random(1, 100) <= States.Aimbot.HitChance then
-                                local origin = args[1].Origin
-                                local direction = (hitPart.Position - origin).Unit * 1000
-                                args[1] = Ray.new(origin, direction)
-                                return oldNamecall(self, unpack(args))
-                            end
-                        end
+                local hitPart = CurrentTarget.Character and (CurrentTarget.Character:FindFirstChild(States.Aimbot.TargetPart) or CurrentTarget.Character:FindFirstChild("HumanoidRootPart"))
+                if hitPart then
+                    if math.random(1, 100) <= States.Aimbot.HitChance then
+                        local args = {...}
+                        local origin = args[1].Origin
+                        local direction = (hitPart.Position - origin).Unit * 1000
+                        args[1] = Ray.new(origin, direction)
+                        return oldNamecall(self, unpack(args))
                     end
                 end
             end
@@ -43,22 +57,21 @@ local function Hook()
     end)
 
     mt.__index = newcclosure(function(self, index)
-        if not checkcaller() and States.Aimbot.SilentAim then
+        -- FAST PATH: Exit immediately if not a target property
+        if index ~= "Hit" and index ~= "Target" then
+            return oldIndex(self, index)
+        end
+
+        if not checkcaller() and States.Aimbot.SilentAim and self == Mouse and CurrentTarget then
             local gun = lp.Character and lp.Character:FindFirstChild("Gun")
             if gun then
-                if self == Mouse and (index == "Hit" or index == "Target") then
-                    local target = Mega.Features.Aimbot and Mega.Features.Aimbot.GetTarget(States.Aimbot.SilentFOV)
-                    if target and target.Character then
-                        local hitPart = target.Character:FindFirstChild(States.Aimbot.TargetPart) or target.Character:FindFirstChild("HumanoidRootPart")
-                        if hitPart then
-                             -- Random chance check
-                            if math.random(1, 100) <= States.Aimbot.HitChance then
-                                if index == "Hit" then
-                                    return hitPart.CFrame
-                                elseif index == "Target" then
-                                    return hitPart
-                                end
-                            end
+                local hitPart = CurrentTarget.Character and (CurrentTarget.Character:FindFirstChild(States.Aimbot.TargetPart) or CurrentTarget.Character:FindFirstChild("HumanoidRootPart"))
+                if hitPart then
+                    if math.random(1, 100) <= States.Aimbot.HitChance then
+                        if index == "Hit" then
+                            return hitPart.CFrame
+                        elseif index == "Target" then
+                            return hitPart
                         end
                     end
                 end
@@ -74,9 +87,9 @@ end
 -- Execute hook
 local success, err = pcall(Hook)
 if not success then
-    warn("⚠️ TumbaHub MM2: Silent Aim hook failed (Executor may not support metatable hooking):", err)
+    warn("⚠️ TumbaHub MM2: Silent Aim hook failed:", err)
 else
-    print("🎯 TumbaHub MM2: Silent Aim module loaded.")
+    print("🎯 TumbaHub MM2: Silent Aim stability fix applied.")
 end
 
 return {}
