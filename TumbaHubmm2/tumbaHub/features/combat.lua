@@ -56,8 +56,9 @@ function Combat.RunKillAura()
     end
 end
 
-        Combat.RunKillAura()
-    end
+-- Main Loop
+Services.RunService.Heartbeat:Connect(function()
+    Combat.RunKillAura()
 end)
 
 print("⚔️ TumbaHub MM2: Combat logic loaded.")
