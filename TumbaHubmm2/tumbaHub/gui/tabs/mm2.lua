@@ -23,13 +23,22 @@ local MainSection = UI.CreateSection(TabFrame, "section_mm2_main")
 
 UI.CreateToggle(MainSection, "toggle_role_reveal", "MM2.RoleReveal")
 UI.CreateToggle(MainSection, "toggle_auto_grab_gun", "MM2.AutoGrabGun")
-UI.CreateToggle(MainSection, "toggle_shoot_murderer", "MM2.AutoShootMurderer")
+
+-- Aimbot Section
+local AimbotSection = UI.CreateSection(TabFrame, "section_mm2_aimbot")
+
+UI.CreateToggleWithSettings(AimbotSection, "toggle_aimbot", "Aimbot.Enabled", nil, {
+    UI.CreateSlider(nil, "slider_aimbot_fov", "Aimbot.FOV", 10, 800),
+    UI.CreateSlider(nil, "slider_aimbot_smoothness", "Aimbot.Smoothness", 1, 10),
+    UI.CreateToggle(nil, "toggle_show_fov", "Aimbot.ShowFOV"),
+    UI.CreateToggle(nil, "toggle_vis_check", "Aimbot.VisibilityCheck")
+})
 
 -- Combat Section
 local CombatSection = UI.CreateSection(TabFrame, "section_mm2_combat")
 
 UI.CreateToggleWithSettings(CombatSection, "toggle_kill_aura", "MM2.KillAura.Enabled", nil, {
-    UI.CreateSlider(nil, "slider_range", "MM2.KillAura.Range", 5, 50)
+    UI.CreateSlider(nil, "slider_killaura_range", "MM2.KillAura.Range", 5, 50)
 })
 
 -- Footer Label

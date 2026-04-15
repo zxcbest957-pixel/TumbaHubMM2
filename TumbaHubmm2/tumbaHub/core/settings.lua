@@ -63,12 +63,20 @@ Mega.States = {
         RoleReveal = true,
         AutoGrabGun = false,
         AutoFarmCoins = false,
-        ShootMurderer = false, -- Auto-shoot murderer if sheriff
         AntiTrap = false,
         KillAura = {
             Enabled = false,
             Range = 25
         }
+    },
+    Aimbot = {
+        Enabled = false,
+        FOV = 150,
+        Smoothness = 2, -- Lower is smoother, 1 is instant
+        TargetPart = "Head",
+        ShowFOV = true,
+        VisibilityCheck = true,
+        TargetMode = "FOV" -- "FOV" or "Distance"
     },
     Player = {
         Speed = false,
