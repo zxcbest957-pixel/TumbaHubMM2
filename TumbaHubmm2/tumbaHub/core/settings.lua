@@ -30,7 +30,7 @@ Mega.Settings = {
         CornerRadius = 12,
         AnimationSpeed = 0.25,
         ShowMenuIcon = true, -- Mobile menu toggle enabled by default for MM2 mobile players
-        SettingsIcon = "rbxassetid://7072719661"
+        SettingsIcon = "rbxassetid://6031289353"
     },
     System = {
         AntiAFK = true,

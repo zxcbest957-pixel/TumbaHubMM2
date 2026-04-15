@@ -108,7 +108,8 @@ function Mega.UI.CreateToggle(parent, textKey, statePath, callback)
     SettingsButton.Position = UDim2.new(1, -85, 0.5, -9)
     SettingsButton.BackgroundTransparency = 1
     SettingsButton.Image = Mega.Settings.Menu.SettingsIcon
-    SettingsButton.ImageColor3 = Mega.Settings.Menu.TextMutedColor
+    SettingsButton.ImageColor3 = Color3.new(1, 1, 1)
+    SettingsButton.ZIndex = 10
     SettingsButton.Parent = MainContainer
 
     local ToggleButton = Instance.new("TextButton")
@@ -214,7 +215,8 @@ function Mega.UI.CreateSlider(parent, textKey, statePath, min, max, callback)
     SettingsButton.Position = UDim2.new(1, -20, 0, 2)
     SettingsButton.BackgroundTransparency = 1
     SettingsButton.Image = Mega.Settings.Menu.SettingsIcon
-    SettingsButton.ImageColor3 = Mega.Settings.Menu.TextMutedColor
+    SettingsButton.ImageColor3 = Color3.new(1, 1, 1)
+    SettingsButton.ZIndex = 10
     SettingsButton.Parent = MainContainer
 
     local SliderTrack = Instance.new("Frame", MainContainer)
@@ -309,7 +311,8 @@ function Mega.UI.CreateButton(parent, textKey, callback)
     SettingsButton.Position = UDim2.new(1, -25, 0.5, -9)
     SettingsButton.BackgroundTransparency = 1
     SettingsButton.Image = Mega.Settings.Menu.SettingsIcon
-    SettingsButton.ImageColor3 = Mega.Settings.Menu.TextMutedColor
+    SettingsButton.ImageColor3 = Color3.new(1, 1, 1)
+    SettingsButton.ZIndex = 10
     SettingsButton.Parent = MainContainer
 
     local SubSettings = Instance.new("Frame", ButtonFrame)
@@ -364,7 +367,8 @@ function Mega.UI.CreateDropdown(parent, textKey, statePath, options, callback, o
     SettingsButton.Position = UDim2.new(0.5, -10, 0.5, -8)
     SettingsButton.BackgroundTransparency = 1
     SettingsButton.Image = Mega.Settings.Menu.SettingsIcon
-    SettingsButton.ImageColor3 = Mega.Settings.Menu.TextMutedColor
+    SettingsButton.ImageColor3 = Color3.new(1, 1, 1)
+    SettingsButton.ZIndex = 10
     SettingsButton.Parent = DropdownFrame
 
     local Button = Instance.new("TextButton", DropdownFrame)
@@ -430,7 +434,8 @@ function Mega.UI.CreateKeybindButton(parent, textKey, statePath)
     SettingsButton.Position = UDim2.new(0.6, -20, 0.5, -8)
     SettingsButton.BackgroundTransparency = 1
     SettingsButton.Image = Mega.Settings.Menu.SettingsIcon
-    SettingsButton.ImageColor3 = Mega.Settings.Menu.TextMutedColor
+    SettingsButton.ImageColor3 = Color3.new(1, 1, 1)
+    SettingsButton.ZIndex = 10
     SettingsButton.Parent = Frame
 
     local Button = Instance.new("TextButton", Frame)
