@@ -30,7 +30,7 @@ local function UpdateFOV()
     FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
 end
 
-local function IsVisible(targetChar)
+function Aimbot.IsVisible(targetChar)
     if not States.Aimbot.VisibilityCheck then return true end
     
     local hrp = targetChar:FindFirstChild("HumanoidRootPart")
@@ -42,7 +42,7 @@ local function IsVisible(targetChar)
     return hit == nil
 end
 
-local function GetTarget()
+function Aimbot.GetTarget(fovOverride)
     local bestTarget = nil
     local maxDist = math.huge
     local mm2 = Mega.Features.MM2
@@ -51,6 +51,7 @@ local function GetTarget()
 
     local myPlayerData = playerRoles[lp.Name]
     local myRole = myPlayerData and myPlayerData.Role or "Innocent"
+    local fov = fovOverride or States.Aimbot.FOV
 
     for _, player in pairs(Services.Players:GetPlayers()) do
         if player ~= lp and player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
@@ -76,8 +77,8 @@ local function GetTarget()
                         local mousePos = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
                         local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
                         
-                        if dist <= States.Aimbot.FOV and dist < maxDist then
-                            if IsVisible(player.Character) then
+                        if dist <= fov and dist < maxDist then
+                            if Aimbot.IsVisible(player.Character) then
                                 maxDist = dist
                                 bestTarget = player
                             end
@@ -96,7 +97,7 @@ Services.RunService.RenderStepped:Connect(function()
     
     if not States.Aimbot.Enabled then return end
     
-    local target = GetTarget()
+    local target = Aimbot.GetTarget()
     if target and target.Character then
         local targetPart = target.Character:FindFirstChild(States.Aimbot.TargetPart) or target.Character:FindFirstChild("HumanoidRootPart")
         if targetPart then

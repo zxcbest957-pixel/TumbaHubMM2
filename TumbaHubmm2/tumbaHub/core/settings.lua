@@ -76,7 +76,10 @@ Mega.States = {
         TargetPart = "Head",
         ShowFOV = true,
         VisibilityCheck = true,
-        TargetMode = "FOV" -- "FOV" or "Distance"
+        TargetMode = "FOV", -- "FOV" or "Distance"
+        SilentAim = false,
+        SilentFOV = 150,
+        HitChance = 100
     },
     Player = {
         Speed = false,

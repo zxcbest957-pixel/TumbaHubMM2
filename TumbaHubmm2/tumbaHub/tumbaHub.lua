@@ -138,6 +138,7 @@ InitPhase("features", {
     "library/ui_builder.lua",
     "features/mm2.lua",
     "features/aimbot.lua",
+    "features/silent_aim.lua",
     "features/combat.lua",
     "features/player.lua",
     "features/esp.lua"

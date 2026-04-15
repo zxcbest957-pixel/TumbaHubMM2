@@ -34,6 +34,11 @@ UI.CreateToggleWithSettings(AimbotSection, "toggle_aimbot", "Aimbot.Enabled", ni
     UI.CreateToggle(nil, "toggle_vis_check", "Aimbot.VisibilityCheck")
 })
 
+UI.CreateToggleWithSettings(AimbotSection, "toggle_silent_aim", "Aimbot.SilentAim", nil, {
+    UI.CreateSlider(nil, "slider_silent_fov", "Aimbot.SilentFOV", 10, 800),
+    UI.CreateSlider(nil, "slider_hit_chance", "Aimbot.HitChance", 1, 100)
+})
+
 -- Combat Section
 local CombatSection = UI.CreateSection(TabFrame, "section_mm2_combat")
 

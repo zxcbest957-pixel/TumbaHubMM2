@@ -42,6 +42,7 @@ Mega.Localization = {
         ["toggle_aimbot"] = { ru = "Аимбот (Camera)", en = "Aimbot (Camera)" },
         ["toggle_show_fov"] = { ru = "Показывать FOV", en = "Show FOV" },
         ["toggle_vis_check"] = { ru = "Проверка видимости", en = "Visibility Check" },
+        ["toggle_silent_aim"] = { ru = "Сайлент Аим (Silent)", en = "Silent Aim" },
         ["toggle_esp"] = { ru = "Включить ESP", en = "Enable ESP" },
         ["toggle_esp_names"] = { ru = "Имена", en = "Names" },
         ["toggle_esp_boxes"] = { ru = "Боксы", en = "Boxes" },
@@ -64,6 +65,8 @@ Mega.Localization = {
         ["slider_autoshoot_fov"] = { ru = "Угол обзора (FOV)", en = "FOV" },
         ["slider_aimbot_fov"] = { ru = "Радиус аима (FOV)", en = "Aimbot FOV" },
         ["slider_aimbot_smoothness"] = { ru = "Сглаживание", en = "Smoothness" },
+        ["slider_silent_fov"] = { ru = "Радиус Сайлента (FOV)", en = "Silent Aim FOV" },
+        ["slider_hit_chance"] = { ru = "Шанс попадания", en = "Hit Chance" },
         ["slider_menu_transparency"] = { ru = "Прозрачность меню", en = "Menu Transparency" },
 
         -- Buttons
