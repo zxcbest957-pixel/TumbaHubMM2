@@ -57,11 +57,11 @@ local function RemoveESP(player)
 end
 
 local function GetRoleColor(role)
-    if role == "Murderer" then return Settings.ESP.MurdererColor or Color3.fromRGB(255, 50, 50)
-    elseif role == "Sheriff" then return Settings.ESP.SheriffColor or Color3.fromRGB(50, 100, 255)
-    elseif role == "Hero" then return Settings.ESP.HeroColor or Color3.fromRGB(255, 255, 50)
+    if role == "Murderer" then return States.ESP.MurdererColor or Color3.fromRGB(255, 50, 50)
+    elseif role == "Sheriff" then return States.ESP.SheriffColor or Color3.fromRGB(50, 100, 255)
+    elseif role == "Hero" then return States.ESP.HeroColor or Color3.fromRGB(255, 255, 50)
     end
-    return Settings.ESP.InnocentColor or Color3.fromRGB(200, 200, 200)
+    return States.ESP.InnocentColor or Color3.fromRGB(200, 200, 200)
 end
 
 local function UpdateESP()
