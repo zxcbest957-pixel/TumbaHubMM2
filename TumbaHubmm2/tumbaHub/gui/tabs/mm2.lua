@@ -28,7 +28,9 @@ UI.CreateToggle(MainSection, "toggle_shoot_murderer", "MM2.AutoShootMurderer")
 -- Combat Section
 local CombatSection = UI.CreateSection(TabFrame, "section_mm2_combat")
 
-UI.CreateToggle(CombatSection, "toggle_kill_aura", "MM2.KillAura.Enabled")
+UI.CreateToggleWithSettings(CombatSection, "toggle_kill_aura", "MM2.KillAura.Enabled", nil, {
+    UI.CreateSlider(nil, "slider_range", "MM2.KillAura.Range", 5, 50)
+})
 
 -- Footer Label
 UI.CreateLabel(TabFrame, "loader_ready")
