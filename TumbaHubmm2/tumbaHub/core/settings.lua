@@ -30,7 +30,7 @@ Mega.Settings = {
         CornerRadius = 12,
         AnimationSpeed = 0.25,
         ShowMenuIcon = true, -- Mobile menu toggle enabled by default for MM2 mobile players
-        SettingsIcon = "rbxassetid://6031289353"
+        SettingsIcon = Mega.GetImageFromURL("https://raw.githubusercontent.com/zxcbest957-pixel/TumbaHubMM2/main/TumbaHubmm2/tumbaHub/icons/settings.png", "settings_gear.png")
     },
     System = {
         AntiAFK = true,

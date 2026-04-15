@@ -36,6 +36,13 @@ function Mega.GetImageFromURL(url, fileName)
         if not isfile(fullPath) then
             if url and url ~= "" then
                 local success, data = pcall(function() return game:HttpGet(url) end)
+                
+                -- Fallback to a reliable public icon if the primary GitHub link fails
+                if (not success or not data or #data < 10) then
+                    local fallbackURL = "https://img.icons8.com/ios-filled/50/ffffff/settings.png"
+                    success, data = pcall(function() return game:HttpGet(fallbackURL) end)
+                end
+
                 if success and data and #data > 0 then
                     writefile(fullPath, data)
                 end
@@ -47,7 +54,8 @@ function Mega.GetImageFromURL(url, fileName)
             if success and asset then return asset end
         end
     end
-    return "rbxassetid://13388222306"
+    -- Ultimate fallback if file operations aren't supported or everything fails
+    return "rbxassetid://6031289353" 
 end
 
 -- Module Loader
