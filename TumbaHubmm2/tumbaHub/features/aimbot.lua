@@ -45,12 +45,20 @@ end
 local function GetTarget()
     local bestTarget = nil
     local maxDist = math.huge
-    local myRole = Mega.Features.MM2 and Mega.Features.MM2.PlayerRoles[lp.Name] or "Innocent"
+    local mm2 = Mega.Features.MM2
+    local playerRoles = mm2 and mm2.PlayerRoles
+    if not playerRoles then return nil end
+
+    local myPlayerData = playerRoles[lp.Name]
+    local myRole = myPlayerData and myPlayerData.Role or "Innocent"
 
     for _, player in pairs(Services.Players:GetPlayers()) do
         if player ~= lp and player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
-            local role = Mega.Features.MM2 and Mega.Features.MM2.PlayerRoles[player.Name] or "Unknown"
-            local isDead = Mega.Features.MM2 and Mega.Features.MM2.DeadPlayers[player.Name]
+            local playerData = playerRoles[player.Name]
+            if not playerData then continue end
+
+            local role = playerData.Role or "Unknown"
+            local isDead = playerData.IsDead
             
             -- Filter logic
             local isTarget = false
